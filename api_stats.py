@@ -3,8 +3,13 @@ import requests
 import datetime
 
 
-def stats_time(hour_offset=0):
+def stats_time_api(hour_offset=0):
     return str(datetime.datetime.strptime(requests.get(conf.DATE_URL + conf.TOKEN).text, '"%Y-%m-%d %H:%M:%S"') +
+               datetime.timedelta(hours=hour_offset))
+
+
+def stats_time(date=stats_time_api(), hour_offset=0):
+    return str(datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S') +
                datetime.timedelta(hours=hour_offset))
 
 
@@ -28,8 +33,9 @@ def stats_diff(data, offset):
 
 
 if __name__ == '__main__':
-    r = get_stats_api_url(stats_time(-26), stats_time(), stats_time(-24),
-                          stats_time(), stats_time(-25), stats_time(-1),
+    n = stats_time()
+    r = get_stats_api_url(stats_time(n, -26), stats_time(n), stats_time(n, -24),
+                          stats_time(n), stats_time(n, -25), stats_time(n, -1),
                           direction='1')
-    print(r)
     print(requests.get(r).text)
+
