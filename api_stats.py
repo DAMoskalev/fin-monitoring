@@ -23,7 +23,6 @@ def get_stats_api_url(start_period, end_period, *dates, direction, group='hour',
     str_date = ''
     for date in dates:
         str_date += str(date) + ','
-    print(str_date)
     return str(
         api_url + '?day_from=' + str(start_period) + '&day_to=' + str(end_period) + '&date_time_hour=' + str_date +
         '&group=' + group + '&direction=' + direction + '&metrics=' + metrics + '&token=' + token)
@@ -31,13 +30,18 @@ def get_stats_api_url(start_period, end_period, *dates, direction, group='hour',
 
 # Конвертация json из stats в словарь
 def data_to_dict(data):
-    return json.load(data)
+    return json.loads(data)
 
 
 # Сравнение данных статистики: сравниваем сегодня и вчера, дефолтно за последний час.
 # Возврат процентов и суммы. offset в часах
-def stats_diff(data, offset=0):
-    pass
+def stats_diff(data,  date=stats_time(), offset=-24):
+    def get_revenue(value):
+        return value.get('revenue')
+    print(date)
+    print(get_revenue(data.get(date)))
+    print(stats_time(date, offset))
+    print(get_revenue(data.get(stats_time(date, offset))))
 
 
 if __name__ == '__main__':
@@ -45,5 +49,7 @@ if __name__ == '__main__':
     r = get_stats_api_url(stats_time(n, -26), stats_time(n), stats_time(n, -24),
                           stats_time(n), stats_time(n, -25), stats_time(n, -1),
                           direction='1')
-    print(requests.get(r).text)
 
+    js = '{"2018-06-16 05:00:00":{"hour":"2018-06-16 05:00:00","revenue":"6934.24401707493"},"2018-06-16 06:00:00":{"hour":"2018-06-16 06:00:00","revenue":"6683.29926335811"},"2018-06-17 05:00:00":{"hour":"2018-06-17 05:00:00","revenue":"6530.28384547917"},"2018-06-17 06:00:00":{"hour":"2018-06-17 06:00:00","revenue":"6741.3182059621"}}'
+
+    stats_diff(data_to_dict(requests.get(r).text))
