@@ -3,50 +3,33 @@ import requests
 import datetime
 
 
-DATE_URL = 'http://1stats-api.rtty.in/api/v1/stats/last-hour?_format=&token=' + conf.TOKEN
-
-url1 = 'http://1stats-api.rtty.in/api/v1/stats/' \
-       '?day_from=2018-06-15 08:00:00' \
-       '&day_to=2018-06-16 10:00:00' \
-       '&date_time_hour=' \
-       '2018-06-16 10:00:00,2018-06-15 10:00:00,' \
-       '2018-06-16 09:00:00,2018-06-16 08:00:00,' \
-       '2018-06-15 09:00:00,2018-06-15 08:00:00,' \
-       '&group=hour' \
-       '&direction=1' \
-       '&metrics=revenue' \
-       '&token=' + conf.TOKEN
+def stats_time(hour_offset=0):
+    return str(datetime.datetime.strptime(requests.get(conf.DATE_URL + conf.TOKEN).text, '"%Y-%m-%d %H:%M:%S"') +
+               datetime.timedelta(hours=hour_offset))
 
 
-# конвертер времени из stats для формирования url
+def get_stats_api_url(start_period, end_period, *dates, direction, group='hour', api_url=conf.STATS_URL,
+                      metrics='revenue', token=conf.TOKEN):
+    str_date = ''
+    for date in dates:
+        str_date += str(date) + ','
+    print(str_date)
+    return str(
+        api_url + '?day_from=' + str(start_period) + '&day_to=' + str(end_period) + '&date_time_hour=' + str_date +
+        '&group=' + group + '&direction=' + direction + '&metrics=' + metrics + '&token=' + token)
 
 
-def to_py_date(stats_date):
-    return datetime.datetime.strptime(stats_date, '"%Y-%m-%d %H:%M:%S"')
+def data_to_dict(data):
+    pass
 
 
-
-    # узнать последний час
-    today = to_py_date(requests.get(DATE_URL).text)
-    yesterday = today - datetime.timedelta(days=1)
-    hour_1 = datetime.timedelta(hours=1)
-    hour_2 = datetime.timedelta(hours=2)
-    hour_3 = datetime.timedelta(hours=3)
-    url2 = 'http://1stats-api.rtty.in/api/v1/stats/?day_from=' + str(yesterday - hour_2) + \
-           '&day_to=' + str(today) + \
-           '&date_time_hour=' + str(today) + ',' + str(yesterday) + ',' \
-           '&group=hour' \
-           '&direction=1' \
-           '&metrics=revenue' \
-           '&token=' + conf.TOKEN
-    print(url2)
-    print(requests.get(url2).text)
-    print(url1)
-
-    # собрать разницу между последним и предпоследним часами
-    # собрать разницу между 2 и 3 часа назад
-    #print(requests.get(url).text)
- #   print(requests.get(url1).text)
+def stats_diff(data, offset):
+    pass
 
 
-
+if __name__ == '__main__':
+    r = get_stats_api_url(stats_time(-26), stats_time(), stats_time(-24),
+                          stats_time(), stats_time(-25), stats_time(-1),
+                          direction='1')
+    print(r)
+    print(requests.get(r).text)
