@@ -1,7 +1,8 @@
 import requests
 
 
-def to_slack(message, url):
+# Отправка простого текста в slack
+def text_to_slack(message, url):
     text = {'text': message,
             'channel': 'py-fin-mon-test',
             'username': 'Fin mon',

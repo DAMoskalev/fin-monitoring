@@ -1,5 +1,5 @@
 import conf
-import datetime
+import json
 
 TATS_URL = 'http://1stats-api.rtty.in/api/v1/stats/'
 
@@ -18,21 +18,16 @@ url1 = 'http://1stats-api.rtty.in/api/v1/stats/' \
 url = 'http://1stats-api.rtty.in/api/v1/stats/'
 
 
-def arg_test(url, token, *dates):
-    string_ = ''
-    for i in dates:
-        string_ += i + ','
-    req = url + string_ + '&token=' + token
-    print(req)
-    pass
+def js_parser(js):
+    for i, j in js.items():
+        print('{}: {}'.format(i, j))
 
 
 if __name__ == '__main__':
-    date1 = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H-%M-%S')
-    date2 = datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(hours=1), '%Y-%m-%d %H-%M-%S')
-    print(date1)
-    print(date2)
-    arg_test(url, conf.TOKEN, date1, date2)
 
-    for i, j in conf.DIRECTIONS.items():
-        print('{}: {}'.format(i, j))
+    js = json.loads('{"2018-06-16 05:00:00":{"hour":"2018-06-16 05:00:00","revenue":"6934.24401707493"},'
+                    '"2018-06-16 06:00:00":{"hour":"2018-06-16 06:00:00","revenue":"6683.29926335811"},'
+                    '"2018-06-17 05:00:00":{"hour":"2018-06-17 05:00:00","revenue":"6530.28384547917"},'
+                    '"2018-06-17 06:00:00":{"hour":"2018-06-17 06:00:00","revenue":"6741.3182059621"}}')
+
+    js_parser(js)
